@@ -59,7 +59,7 @@ docker run -d --name dods-server \
   -e DODS_SOURCETVPORT="27020" \
   -e DODS_TICKRATE="" \
   -v /home/ponfertato/Docker/dods-server:/home/steam/dods-server/dods \
-  ponfertato/dayofdefeat-source:latest
+  ponfertato/dods:latest
 ```
 
 ...or Docker Compose:
@@ -70,7 +70,7 @@ services:
   dods-server:
     container_name: dods-server
     restart: unless-stopped
-    image: ponfertato/dayofdefeat-source:latest
+    image: ponfertato/dods:latest
     tty: true
     stdin_open: true
     ports:
@@ -98,7 +98,7 @@ This image contains a health check to continually ensure the server is online. T
 
 ```sh
 CONTAINER ID        IMAGE                    COMMAND                 CREATED             STATUS                    PORTS                                                                                     NAMES
-e9c073a4b262        ponfertato/dayofdefeat-source            "/home/steam/entry.sh"   21 minutes ago      Up 21 minutes (healthy)   0.0.0.0:27005->27005/udp, 0.0.0.0:27015->27015/tcp, 0.0.0.0:27015->27015/udp   distracted_cerf
+e9c073a4b262        ponfertato/dods            "/home/steam/entry.sh"   21 minutes ago      Up 21 minutes (healthy)   0.0.0.0:27005->27005/udp, 0.0.0.0:27015->27015/tcp, 0.0.0.0:27015->27015/udp   distracted_cerf
 ```
 
 **License**

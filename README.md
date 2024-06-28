@@ -58,7 +58,7 @@ docker run -d --name dods-server \
   -e DODS_PORT=27015 \
   -e DODS_SOURCETVPORT="27020" \
   -e DODS_TICKRATE="" \
-  -v /home/ponfertato/Docker/dods-server/addons:/home/steam/dayofdefeatsource-server/dods/addons \
+  -v /home/ponfertato/Docker/dods-server:/home/steam/dods-server/dods \
   ponfertato/dayofdefeat-source:latest
 ```
 
@@ -88,7 +88,7 @@ services:
       - DODS_SOURCETVPORT="27020"
       - DODS_TICKRATE=""
     volumes:
-      - ./dods-server:/home/steam/dayofdefeatsource-server/dods
+      - ./dods-server:/home/steam/dods-server/dods
 ```
 
 **Health Check**

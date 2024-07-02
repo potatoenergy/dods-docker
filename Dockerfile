@@ -1,12 +1,7 @@
-FROM sonroyaalmerol/steamcmd-arm64:root as build_stage
+FROM sonroyaalmerol/steamcmd-arm64:root AS build_stage
 
 LABEL maintainer="ponfertato@ya.ru"
-LABEL description="A Dockerised version of the Counter-Strike: Source dedicated server for ARM64 (using box86)"
-
-ENV STEAMAPPID 232290
-ENV STEAMAPP dods
-ENV STEAMAPPDIR /home/steam/${STEAMAPP}-server
-ENV HOMEDIR /home/steam
+LABEL description="A Dockerised version of the Day of Defeat: Source dedicated server for ARM64 (using box86)"
 
 RUN dpkg --add-architecture amd64 \
     && dpkg --add-architecture i386 \
@@ -26,21 +21,23 @@ RUN dpkg --add-architecture amd64 \
     && wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_i386.deb \
     && dpkg -i libssl1.1_1.1.1f-1ubuntu2_i386.deb \
     && rm libssl1.1_1.1.1f-1ubuntu2_i386.deb \
-    && rm -rf /var/lib/apt/lists/* 
+    && rm -rf /var/lib/apt/lists/*
+
+ENV HOMEDIR="/home/steam" \
+    STEAMAPPID="232290" \
+    STEAMAPPDIR="/home/steam/dods-server"
 
 COPY etc/entry.sh ${HOMEDIR}/entry.sh
 
 WORKDIR ${STEAMAPPDIR}
 
 RUN chmod +x "${HOMEDIR}/entry.sh" \
-    && chown -R "${USER}:${USER}" "${HOMEDIR}/entry.sh" "${STEAMAPPDIR}"
+    && chown -R "${USER}":"${USER}" "${HOMEDIR}/entry.sh" ${STEAMAPPDIR}
 
 FROM build_stage AS bookworm-root
 
-EXPOSE 27015/tcp 27015/udp 27005/udp 27020/udp
-
-ENV DODS_ARGS=""\
-	DODS_CLIENTPORT="27005" \
+ENV DODS_ARGS="" \
+    DODS_CLIENTPORT="27005" \
     DODS_IP="" \
     DODS_LAN="0" \
     DODS_MAP="dod_anzio" \
@@ -49,11 +46,15 @@ ENV DODS_ARGS=""\
     DODS_SOURCETVPORT="27020" \
     DODS_TICKRATE=""
 
-USER ${USER}
+EXPOSE ${DODS_CLIENTPORT}/udp \
+    ${DODS_PORT}/tcp \
+    ${DODS_PORT}/udp \
+    ${DODS_SOURCETVPORT}/udp
 
+USER ${USER}
 WORKDIR ${HOMEDIR}
 
 HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-  CMD netstat -l | grep "27015.*LISTEN"
+    CMD netstat -l | grep "${DODS_PORT}.*LISTEN"
 
 CMD ["bash", "entry.sh"]
